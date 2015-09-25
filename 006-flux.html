@@ -31,7 +31,7 @@
 
         /** Store */
 
-        _recipes = [];
+        var _recipes = [];
 
         function addRecipe(text){
             _recipes.push(text);
@@ -41,9 +41,20 @@
             getRecipes: function(){
                return _recipes;
             }
-        }, function(payload){
+        }, function(payload) {
             if(payload.actionType === "ADD_RECIPE") {
+                console.log(payload.text);
                 addRecipe(payload.text);
+                RecipeStore.emitChange();
+            }
+            else if(payload.actionType === "ADD_KITTEN") {
+                console.log(payload.text);
+                addRecipe({_id: payload.text});
+                RecipeStore.emitChange();
+            }
+            else if(payload.actionType === "CLEAR_RECIPES") {
+//                _recipes.length = 0;
+                _recipes = [];
                 RecipeStore.emitChange();
             }
         });
@@ -55,6 +66,17 @@
                return {
                   actionType: "ADD_RECIPE",
                   text: text
+               }
+            },
+            addKitten: function(text) {
+               return {
+                  actionType: "ADD_KITTEN",
+                  text: text
+               }
+            },
+            clearRecipes: function() {
+               return {
+                  actionType: "CLEAR_RECIPES"
                }
             }
         });
@@ -86,6 +108,12 @@
             addRecipe: function(){
                 RecipeActions.addRecipe({_id: Math.floor(Math.random()*1000000)});
             },
+            addKitten: function(){
+                RecipeActions.addKitten('Kitten!');
+            },
+            clearRecipes: function(){
+                RecipeActions.clearRecipes();
+            },
             render: function() {
                 return (
                 <div className="recipes_app">
@@ -95,6 +123,8 @@
                         })}
                     </ul>
                     <button onClick={this.addRecipe}>Add recipe</button>
+                    <button onClick={this.addKitten}>Add kitten</button>
+                    <button onClick={this.clearRecipes}>Clear</button>
                 </div>
                 )
             }
