@@ -124,6 +124,9 @@
             onChange: function() {
                 var value = this.refs.input.getDOMNode().value;
                 console.log("onChange: " + value);
+                this.setState(
+                    {'value': value}
+                );
                 RecipeActions.inputValueChanged(value);
             },
             render: function() {
