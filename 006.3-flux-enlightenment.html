@@ -20,7 +20,8 @@
 
         /** Store */
 
-        _recipes = [];
+        var _recipes = [];
+        var _newRecipe = '<recipe>';
 
         function addRecipes(recipe){
             _recipes.push(recipe);
@@ -37,6 +38,9 @@
         var RecipeStore = Flux.createStore({
             getRecipes: function(){
                return _recipes;
+            },
+            getNewRecipeText: function() {
+                return _newRecipe;
             }
         }, function(payload){
             if(payload.actionType === "ADD_RECIPE") {
@@ -49,6 +53,10 @@
             }
             if(payload.actionType === "DELETE_RECIPE") {
                 deleteRecipe(payload.index);
+                RecipeStore.emitChange();
+            }
+            if (payload.actionType === "INPUT_VALUE_CHANGED") {
+                _newRecipe = payload.value;
                 RecipeStore.emitChange();
             }
         });
@@ -72,6 +80,12 @@
                   actionType: "DELETE_RECIPE",
                   index: index
                }
+            },
+            inputValueChanged: function(value){
+               return {
+                  actionType: "INPUT_VALUE_CHANGED",
+                  index: value
+               }
             }
         });
 
@@ -89,11 +103,29 @@
                 return getRecipes();
             },
             storeDidChange: function() {
-                console.log('changed')
+                console.log('changed');
                 this.setState(getRecipes());
             },
             render: function() {
                 return <Recipes recipes={this.state.recipes} />;
+            }
+        });
+
+        var RecipeInput = React.createClass({
+            mixins: [RecipeStore.mixin],
+            getInitialState: function() {
+                return {'value': RecipeStore.getNewRecipeText()};
+            },
+            storeDidChange: function() {
+                this.setState(
+                        {'value': RecipeStore.getNewRecipeText()}
+                );
+            },
+            onChange: function() {
+                RecipeActions.inputValueChanged(this.refs.input.getDOMNode().value);
+            },
+            render: function() {
+                return <input type="text" value={this.state.value} onChange={this.onChange} ref="input"/>;
             }
         });
 
@@ -128,7 +160,7 @@
                 */
                 return (
                 <div className="todos_app">
-                    <input type="text" value={this.props.HOMEWORK} ref="inv"/>
+                    <RecipeInput ref="inv"/>
                     <ul className="recipes">
                         {recipeNodes}
                     </ul>
