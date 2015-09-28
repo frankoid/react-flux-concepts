@@ -84,7 +84,7 @@
             inputValueChanged: function(value){
                return {
                   actionType: "INPUT_VALUE_CHANGED",
-                  index: value
+                  value: value
                }
             }
         });
@@ -122,7 +122,9 @@
                 );
             },
             onChange: function() {
-                RecipeActions.inputValueChanged(this.refs.input.getDOMNode().value);
+                var value = this.refs.input.getDOMNode().value;
+                console.log("onChange: " + value);
+                RecipeActions.inputValueChanged(value);
             },
             render: function() {
                 return <input type="text" value={this.state.value} onChange={this.onChange} ref="input"/>;
@@ -133,8 +135,8 @@
 
         var Recipes = React.createClass({
             addRecipe: function(){
-                RecipeActions.addRecipe(this.refs.inv.getDOMNode().value);
-                this.refs.inv.getDOMNode().value = "";
+                RecipeActions.addRecipe(RecipeStore.getNewRecipeText());
+                RecipeActions.inputValueChanged("");
             },
             clearRecipes: function(){
                 RecipeActions.clearRecipes();
@@ -160,7 +162,7 @@
                 */
                 return (
                 <div className="todos_app">
-                    <RecipeInput ref="inv"/>
+                    <RecipeInput/>
                     <ul className="recipes">
                         {recipeNodes}
                     </ul>
