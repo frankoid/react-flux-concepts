@@ -144,6 +144,7 @@
                 RecipeActions.deleteRecipe(index);
             },
             onNewRecipeTextInput: function(value) {
+                this.setState({'newRecipeText': value});
                 RecipeActions.inputValueChanged(value);
             },
             render: function() {
