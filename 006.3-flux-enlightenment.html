@@ -114,8 +114,7 @@
         var RecipeInput = React.createClass({
             onChange: function() {
                 var value = this.refs.input.getDOMNode().value;
-                console.log("onChange: " + value);
-                RecipeActions.inputValueChanged(value);
+                this.props.onNewRecipeTextInput(value);
             },
             render: function() {
                 return <input type="text" value={this.props.newRecipeText} onChange={this.onChange} ref="input"/>;
@@ -144,6 +143,9 @@
             deleteRecipe: function(index){
                 RecipeActions.deleteRecipe(index);
             },
+            onNewRecipeTextInput: function(value) {
+                RecipeActions.inputValueChanged(value);
+            },
             render: function() {
                 var recipeNodes = this.props.recipes.map(function(recipe, index){
                         return <li key={index}>Recipe {recipe} <button type="button" onClick={self.deleteRecipe.bind(self, index)}>Delete</button></li>
@@ -162,7 +164,8 @@
                 */
                 return (
                 <div className="todos_app">
-                    <RecipeInput newRecipeText={this.state.newRecipeText}/>
+                    <RecipeInput newRecipeText={this.state.newRecipeText}
+                                 onNewRecipeTextInput={this.onNewRecipeTextInput}/>
                     <ul className="recipes">
                         {recipeNodes}
                     </ul>
