@@ -112,31 +112,28 @@
         });
 
         var RecipeInput = React.createClass({
-            mixins: [RecipeStore.mixin],
-            getInitialState: function() {
-                return {'value': RecipeStore.getNewRecipeText()};
-            },
-            storeDidChange: function() {
-                this.setState(
-                    {'value': RecipeStore.getNewRecipeText()}
-                );
-            },
             onChange: function() {
                 var value = this.refs.input.getDOMNode().value;
                 console.log("onChange: " + value);
-                this.setState(
-                    {'value': value}
-                );
                 RecipeActions.inputValueChanged(value);
             },
             render: function() {
-                return <input type="text" value={this.state.value} onChange={this.onChange} ref="input"/>;
+                return <input type="text" value={this.props.newRecipeText} onChange={this.onChange} ref="input"/>;
             }
         });
 
         /** Component */
 
         var Recipes = React.createClass({
+            mixins: [RecipeStore.mixin],
+            getInitialState: function() {
+                return {'newRecipeText': RecipeStore.getNewRecipeText()};
+            },
+            storeDidChange: function() {
+                this.setState(
+                    {'newRecipeText': RecipeStore.getNewRecipeText()}
+                );
+            },
             addRecipe: function(){
                 RecipeActions.addRecipe(RecipeStore.getNewRecipeText());
                 RecipeActions.inputValueChanged("");
@@ -165,7 +162,7 @@
                 */
                 return (
                 <div className="todos_app">
-                    <RecipeInput/>
+                    <RecipeInput newRecipeText={this.state.newRecipeText}/>
                     <ul className="recipes">
                         {recipeNodes}
                     </ul>
